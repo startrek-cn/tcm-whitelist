@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-04T14:11:00+08:00",
+  "_note": "白名单数据。authorized_machines 数组中每项包含 code(机器码)、name(备注)、added_at(添加日期)。工具启动时会校验本机机器码是否在列。",
+  "authorized_machines": []
+}

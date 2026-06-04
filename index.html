@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中医课程自动继续工具 - 获取授权</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --success: #16a34a;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text);
+    margin: 0;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  .header { text-align: center; color: white; padding: 32px 0; }
+  .header h1 { font-size: 32px; margin: 0 0 12px 0; }
+  .header p { font-size: 16px; opacity: 0.95; margin: 0; }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .card h2 { margin: 0 0 16px 0; font-size: 20px; }
+  .card h2 .icon { margin-right: 8px; }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    flex: 0 0 32px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .step-content { flex: 1; }
+  .step-content strong { display: block; margin-bottom: 4px; }
+  .step-content p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .features { list-style: none; padding: 0; margin: 0; }
+  .features li {
+    padding: 8px 0;
+    padding-left: 28px;
+    position: relative;
+  }
+  .features li::before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+  }
+
+  .code-block {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    word-break: break-all;
+  }
+
+  .contact-box {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+    border-left: 4px solid var(--primary);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 16px 0;
+  }
+  .contact-box strong { color: var(--primary-dark); }
+
+  .footer {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    padding: 24px 0;
+    font-size: 13px;
+  }
+  .footer a { color: white; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🏥 中医课程自动继续工具</h1>
+    <p>为中医学习者打造的课程自动播放助手</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="icon">📦</span>工具能做什么</h2>
+    <ul class="features">
+      <li>自动打开中医课程网（tcmzx.cn）</li>
+      <li>登录后自动监控"继续"按钮，防止课程中断</li>
+      <li>支持 Chrome / Edge / Chromium 浏览器</li>
+      <li>Mac / Windows 双平台，单文件可执行</li>
+      <li>一次配置，长期使用，无需重复操作</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><span class="icon">🚀</span>三步开始使用</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <strong>运行工具</strong>
+        <p>双击 <code>tcm-course-tool</code>（Mac）或 <code>tcm-course-tool.exe</code>（Windows）</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <strong>复制机器码</strong>
+        <p>工具首次启动会显示你的机器码（如 <code>ABCD-EF12-3456-7890</code>），点"复制机器码"按钮</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <strong>联系作者开通授权</strong>
+        <p>把机器码发给作者，作者会帮你加进白名单。重新启动工具即可使用。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="icon">💬</span>获取授权</h2>
+    <div class="contact-box">
+      <p style="margin:0 0 8px 0;"><strong>📱 微信：</strong>请联系作者获取微信号</p>
+      <p style="margin:0;"><strong>💰 费用：</strong>一次性付费，永久授权</p>
+    </div>
+    <p style="color: var(--muted); font-size: 14px; margin: 0;">
+      ⚠️ 授权与机器码一一对应。换电脑请重新申请。
+    </p>
+  </div>
+
+  <div class="card">
+    <h2><span class="icon">❓</span>常见问题</h2>
+    <p><strong>Q: 工具安全吗？会泄露我的账号吗？</strong></p>
+    <p style="color: var(--muted);">A: 工具只控制你本机的浏览器，登录和操作都在你的浏览器里完成。代码开源可审计，工具不收集任何信息。</p>
+    <p><strong>Q: 换了电脑怎么办？</strong></p>
+    <p style="color: var(--muted);">A: 把新电脑的机器码发给作者，作者在白名单里加一下，你重新启动工具即可。</p>
+    <p><strong>Q: 工具会被杀毒软件拦截吗？</strong></p>
+    <p style="color: var(--muted);">A: 由于是个人开发者未签名 exe，部分杀毒软件可能误报。点"仍要运行"即可，源码透明可查。</p>
+  </div>
+
+  <div class="footer">
+    <p>中医课程自动继续工具 v1.0 · 由 Howard 提供技术支持</p>
+    <p>⚙️ 实用优先，快速响应</p>
+  </div>
+</div>
+</body>
+</html>
