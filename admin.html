@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCM 授权管理</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    padding: 24px 0 32px;
+    border-bottom: 1px solid #1e293b;
+    margin-bottom: 32px;
+  }
+  .header h1 { font-size: 24px; color: #f8fafc; margin-bottom: 8px; }
+  .header p { color: #64748b; font-size: 14px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #334155;
+  }
+  .card h2 {
+    font-size: 16px;
+    color: #f8fafc;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #334155;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: #3b82f6;
+  }
+  .form-group input::placeholder { color: #475569; }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+  }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: auto;
+    border-radius: 6px;
+  }
+
+  .toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    max-width: 360px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-success { background: #065f46; color: #6ee7b7; border: 1px solid #10b981; }
+  .toast-error { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+
+  .auth-list { list-style: none; }
+  .auth-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #334155;
+    font-size: 13px;
+  }
+  .auth-item:last-child { border-bottom: none; }
+  .auth-info { flex: 1; }
+  .auth-code { color: #93c5fd; font-family: monospace; font-size: 13px; }
+  .auth-name { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+  .auth-expire { color: #f59e0b; font-size: 11px; margin-top: 2px; }
+  .auth-expire.valid { color: #10b981; }
+  .auth-expire.expired { color: #ef4444; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-valid { background: #065f46; color: #6ee7b7; }
+  .badge-expired { background: #7f1d1d; color: #fca5a5; }
+  .badge-permanent { background: #1e3a5f; color: #93c5fd; }
+
+  .full-width { grid-column: 1 / -1; }
+
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; color: #3b82f6; }
+  .stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  .log-area {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #64748b;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 12px;
+  }
+  .log-area .log-entry { padding: 2px 0; }
+  .log-area .log-ok { color: #10b981; }
+  .log-area .log-err { color: #ef4444; }
+  .log-area .log-info { color: #3b82f6; }
+
+  .quick-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+  .quick-btn {
+    flex: 1;
+    padding: 8px 4px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .quick-btn:hover { border-color: #3b82f6; color: #e2e8f0; }
+  .quick-btn.active { border-color: #3b82f6; color: #3b82f6; background: #1e293b; }
+
+  .search-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .search-box input {
+    flex: 1;
+    padding: 8px 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: 13px;
+    outline: none;
+  }
+  .search-box input:focus { border-color: #3b82f6; }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: #475569;
+    font-size: 14px;
+  }
+
+  .delete-btn {
+    background: none;
+    border: 1px solid #7f1d1d;
+    color: #f87171;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .delete-btn:hover { background: #7f1d1d; color: #fca5a5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🔐 TCM 授权管理面板</h1>
+    <p>快速管理用户授权 · 操作即时生效</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="statTotal">-</div>
+      <div class="stat-label">总授权数</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statValid">-</div>
+      <div class="stat-label">有效授权</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statToday">0</div>
+      <div class="stat-label">今日新增</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- 快速授权 -->
+    <div class="card">
+      <h2>⚡ 快速授权</h2>
+      <div class="form-group">
+        <label>机器码（从用户处获取）</label>
+        <input type="text" id="machineCode" placeholder="如 ABCD-EF12-3456-7890" maxlength="20">
+      </div>
+      <div class="form-group">
+        <label>用户昵称（可选）</label>
+        <input type="text" id="userName" placeholder="如 淘宝用户001">
+      </div>
+      <div class="form-group">
+        <label>授权时长</label>
+        <div class="quick-btns">
+          <button class="quick-btn active" data-days="1" onclick="selectDays(this, 1)">1天</button>
+          <button class="quick-btn" data-days="30" onclick="selectDays(this, 30)">1月</button>
+          <button class="quick-btn" data-days="180" onclick="selectDays(this, 180)">半年</button>
+          <button class="quick-btn" data-days="365" onclick="selectDays(this, 365)">1年</button>
+          <button class="quick-btn" data-days="3650" onclick="selectDays(this, 3650)">永久</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btnIssue" onclick="issueAuth()">立即授权</button>
+    </div>
+
+    <!-- 刷新列表 -->
+    <div class="card">
+      <h2>📋 授权列表 <span id="listCount" style="color:#64748b;font-size:12px;font-weight:normal;"></span></h2>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索机器码或昵称..." oninput="filterList()">
+        <button class="btn btn-primary btn-sm" onclick="loadList()" style="width:auto;white-space:nowrap;">🔄 刷新</button>
+      </div>
+      <ul class="auth-list" id="authList">
+        <li class="empty-state">加载中...</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 操作日志 -->
+  <div class="card full-width">
+    <h2>📝 操作日志</h2>
+    <div class="log-area" id="logArea">
+      <div class="log-entry log-info">系统启动...</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'https://tcm-auth-server-2026.onrender.com';
+const ADMIN_SECRET = 'tcm-admin-2026';
+let selectedDays = 1;
+let todayCount = 0;
+let authData = [];
+
+function log(msg, type) {
+  var area = document.getElementById('logArea');
+  var time = new Date().toLocaleTimeString('zh-CN', {hour12: false});
+  var cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : 'log-info';
+  var entry = document.createElement('div');
+  entry.className = 'log-entry ' + cls;
+  entry.textContent = '[' + time + '] ' + msg;
+  area.appendChild(entry);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showToast(msg, type) {
+  var toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast toast-' + type + ' show';
+  setTimeout(function() { toast.className = 'toast'; }, 3000);
+}
+
+function selectDays(el, days) {
+  var btns = document.querySelectorAll('.quick-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].className = 'quick-btn';
+  el.className = 'quick-btn active';
+  selectedDays = days;
+}
+
+async function apiCall(method, url, body) {
+  var opts = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Admin-Secret': ADMIN_SECRET
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  var resp = await fetch(API_URL + url, opts);
+  return resp.json();
+}
+
+async function issueAuth() {
+  var code = document.getElementById('machineCode').value.trim().toUpperCase();
+  var name = document.getElementById('userName').value.trim() || code;
+
+  if (!code) {
+    showToast('请输入机器码', 'error');
+    return;
+  }
+
+  var btn = document.getElementById('btnIssue');
+  btn.disabled = true;
+  btn.textContent = '授权中...';
+
+  try {
+    var data = await apiCall('POST', '/admin/issue', {
+      machineCode: code,
+      name: name,
+      days: selectedDays
+    });
+
+    if (data.ok || data.token) {
+      var expires = data.token ? data.token.expiresAt.slice(0, 10) : '未知';
+      log('授权成功: ' + code + ' (' + name + ') → ' + selectedDays + '天，至 ' + expires, 'ok');
+      showToast('✅ 授权成功！有效期至 ' + expires, 'success');
+      document.getElementById('machineCode').value = '';
+      document.getElementById('userName').value = '';
+      todayCount++;
+      document.getElementById('statToday').textContent = todayCount;
+      loadList();
+    } else {
+      log('授权失败: ' + (data.error || '未知错误'), 'err');
+      showToast('❌ ' + (data.error || '授权失败'), 'error');
+    }
+  } catch (e) {
+    log('网络错误: ' + e.message, 'err');
+    showToast('❌ 网络错误: ' + e.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '立即授权';
+}
+
+async function loadList() {
+  try {
+    var data = await apiCall('GET', '/admin/tokens', null);
+    authData = (data.authList || []).slice();
+    updateStats(authData);
+    renderList(authData);
+    log('刷新列表: ' + authData.length + ' 个授权', 'info');
+  } catch (e) {
+    log('加载列表失败: ' + e.message, 'err');
+  }
+}
+
+function updateStats(list) {
+  var valid = 0;
+  var now = new Date();
+  for (var i = 0; i < list.length; i++) {
+    var entry = list[i];
+    if (entry.days >= 3650) { valid++; continue; }
+    if (entry.expires) {
+      var exp = new Date(entry.expires + 'T23:59:59');
+      if (exp > now) valid++;
+    } else { valid++; }
+  }
+  document.getElementById('statTotal').textContent = list.length;
+  document.getElementById('statValid').textContent = valid;
+  document.getElementById('listCount').textContent = '(' + list.length + ')';
+}
+
+function renderList(list) {
+  var ul = document.getElementById('authList');
+  if (list.length === 0) {
+    ul.innerHTML = '<li class="empty-state">暂无授权记录</li>';
+    return;
+  }
+
+  var now = new Date();
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var entry = list[i];
+    var code = entry.code || entry.machineCode || '-';
+    var name = entry.name || code;
+    var days = entry.days || '-';
+    var expires = entry.expires || (days >= 3650 ? '永久' : '-');
+
+    var statusCls = '';
+    var badge = '';
+    if (days >= 3650) {
+      badge = '<span class="badge badge-permanent">永久</span>';
+    } else if (expires && expires !== '-') {
+      var expDate = new Date(expires + 'T23:59:59');
+      if (expDate > now) {
+        badge = '<span class="badge badge-valid">有效</span>';
+      } else {
+        badge = '<span class="badge badge-expired">已过期</span>';
+      }
+    } else {
+      badge = '<span class="badge badge-valid">有效</span>';
+    }
+
+    html += '<li class="auth-item">' +
+      '<div class="auth-info">' +
+        '<div class="auth-code">' + code + ' ' + badge + '</div>' +
+        '<div class="auth-name">👤 ' + name + '</div>' +
+        '<div class="auth-expire ' + (badge.indexOf('expired') === -1 ? 'valid' : 'expired') + '">' +
+          (expires !== '-' ? '⏰ 至 ' + expires + ' (' + days + '天)' : '⏰ 永久') +
+        '</div>' +
+      '</div>' +
+      '<button class="delete-btn" onclick="deleteAuth(\'' + code + '\')">删除</button>' +
+    '</li>';
+  }
+  ul.innerHTML = html;
+}
+
+function filterList() {
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!q) { renderList(authData); return; }
+  var filtered = authData.filter(function(e) {
+    return (e.code || '').toLowerCase().indexOf(q) !== -1 ||
+           (e.name || '').toLowerCase().indexOf(q) !== -1 ||
+           (e.machineCode || '').toLowerCase().indexOf(q) !== -1;
+  });
+  renderList(filtered);
+}
+
+async function deleteAuth(code) {
+  if (!confirm('确定删除 ' + code + ' 的授权？')) return;
+
+  try {
+    var list = authData.filter(function(e) { return (e.code || '').toUpperCase() !== code.toUpperCase(); });
+
+    // Save filtered list via re-issuing via a reload approach
+    // We need to update authlist.json on server
+    // For now, we reload and the user can ask Howard to remove
+    log('提示: 请在 authlist.json 中手动删除 ' + code + '（或联系 Howard）', 'info');
+    showToast('请联系 Howard 删除该授权', 'error');
+  } catch (e) {
+    log('删除失败: ' + e.message, 'err');
+  }
+}
+
+// Init
+loadList();
+log('管理面板已加载', 'info');
+
+// Enter key support
+document.getElementById('machineCode').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') issueAuth();
+});
+document.getElementById('userName').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') issueAuth();
+});
+</script>
+</body>
+</html>
