@@ -91,6 +91,42 @@
   }
   .contact-box strong { color: var(--primary-dark); }
 
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .price-card {
+    background: linear-gradient(135deg, #f8fafc, #e0e7ff);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .price-card:hover { border-color: var(--primary); }
+  .price-card.popular {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    position: relative;
+  }
+  .price-card.popular::after {
+    content: "推荐";
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .price-card .label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .price-card .amount { font-size: 28px; font-weight: 700; color: var(--primary-dark); }
+  .price-card .amount span { font-size: 14px; font-weight: 400; }
+  .price-card .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
   .footer {
     text-align: center;
     color: rgba(255,255,255,0.9);
@@ -144,13 +180,45 @@
   </div>
 
   <div class="card">
-    <h2><span class="icon">💬</span>获取授权</h2>
+    <h2><span class="icon">💰</span>授权费用</h2>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="label">免费试用</div>
+        <div class="amount">¥0 <span>/ 1天</span></div>
+        <div class="desc">体验全部功能</div>
+      </div>
+      <div class="price-card">
+        <div class="label">月度授权</div>
+        <div class="amount">¥15 <span>/ 月</span></div>
+        <div class="desc">灵活使用</div>
+      </div>
+      <div class="price-card popular">
+        <div class="label">半年授权</div>
+        <div class="amount">¥60 <span>/ 半年</span></div>
+        <div class="desc">日均 ¥0.33</div>
+      </div>
+      <div class="price-card">
+        <div class="label">年度授权</div>
+        <div class="amount">¥100 <span>/ 年</span></div>
+        <div class="desc">日均 ¥0.27</div>
+      </div>
+      <div class="price-card">
+        <div class="label">永久授权</div>
+        <div class="amount">¥188</div>
+        <div class="desc">终身使用</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="icon">📮</span>获取授权</h2>
     <div class="contact-box">
-      <p style="margin:0 0 8px 0;"><strong>📱 微信：</strong>请联系作者获取微信号</p>
-      <p style="margin:0;"><strong>💰 费用：</strong>一次性付费，永久授权</p>
+      <p style="margin:0 0 10px 0;"><strong>📧 QQ 邮箱：</strong><a href="mailto:514218411@qq.com" style="color:var(--primary-dark);">514218411@qq.com</a></p>
+      <p style="margin:0; font-size:14px; color:var(--muted);">请将你的<strong>机器码</strong>通过邮件发送，邮件主题注明"<strong>TCM授权</strong>"，作者会尽快为你开通。</p>
     </div>
     <p style="color: var(--muted); font-size: 14px; margin: 0;">
-      ⚠️ 授权与机器码一一对应。换电脑请重新申请。
+      ⚠️ 授权与机器码一一对应。换电脑请重新申请。<br>
+      🛒 后续将开放网店自助购买，敬请期待。
     </p>
   </div>
 
@@ -165,7 +233,7 @@
   </div>
 
   <div class="footer">
-    <p>中医课程自动继续工具 v1.0 · 由 Howard 提供技术支持</p>
+    <p>中医课程自动继续工具 v1.4 · 由 Howard 提供技术支持</p>
     <p>⚙️ 实用优先，快速响应</p>
   </div>
 </div>
